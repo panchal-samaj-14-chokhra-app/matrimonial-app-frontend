@@ -325,3 +325,85 @@ export default function ProfileDetailPage({ params }: { params: { id: string } }
     </div>
   )
 }
+
+
+
+const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, name, isVerified }) => {
+  const imgs = images && images.length > 0 ? images : [{ url: "/placeholder.svg" }];
+  const [current, setCurrent] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % imgs.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [imgs.length]);
+
+  return (
+    <>
+      <div className="relative flex items-center justify-center h-80 bg-gray-50">
+        <Image
+          src={imgs[current].url || "/placeholder.svg"}
+          alt={name || `Profile Image ${current + 1}`}
+          width={400}
+          height={500}
+          className="w-full h-80 object-cover rounded-t-lg transition-all duration-700 cursor-pointer select-none"
+          onClick={() => setShowModal(true)}
+          onContextMenu={e => e.preventDefault()}
+          draggable={false}
+        />
+        {isVerified && (
+          <div className="absolute top-4 right-4">
+            <Badge className="bg-green-500 hover:bg-green-600">सत्यापित</Badge>
+          </div>
+        )}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+          {imgs.map((_, idx) => (
+            <span
+              key={idx}
+              className={`block w-3 h-3 rounded-full ${idx === current ? "bg-orange-600" : "bg-gray-300"}`}
+            />
+          ))}
+        </div>
+      </div>
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80" onClick={() => setShowModal(false)}>
+          <div className="relative max-w-3xl w-full flex items-center justify-center" onClick={e => e.stopPropagation()}>
+            <button
+              className="absolute top-2 right-2 text-white text-3xl font-bold z-10 bg-black bg-opacity-40 rounded-full px-2 hover:bg-opacity-70"
+              onClick={() => setShowModal(false)}
+              aria-label="Close preview"
+            >
+              &times;
+            </button>
+            <div className="relative w-full flex items-center justify-center">
+              <Image
+                src={imgs[current].url || "/placeholder.svg"}
+                alt={name || `Profile Image ${current + 1}`}
+                width={800}
+                height={1000}
+                className="object-contain max-h-[90vh] w-auto mx-auto rounded-lg shadow-lg select-none pointer-events-none"
+                onContextMenu={e => e.preventDefault()}
+                draggable={false}
+              />
+              {/* Anti-screenshot/anti-download overlay */}
+              <div
+                className="absolute inset-0 bg-transparent select-none"
+                style={{ pointerEvents: 'auto', userSelect: 'none' }}
+                onContextMenu={e => e.preventDefault()}
+              >
+                <div className="w-full h-full flex items-center justify-center pointer-events-none">
+                  <span className="text-white text-lg bg-black bg-opacity-30 px-4 py-2 rounded-lg select-none" style={{ userSelect: 'none' }}>Image protected</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+
+
