@@ -404,6 +404,3 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, name, isVerified 
     </>
   );
 };
-
-
-
