@@ -9,7 +9,6 @@ import { Grid, List, LayoutGrid } from "lucide-react"
 
 interface Profile {
   id: string
-  profileNumber: number;
   name: string
   age: number
   location: string
@@ -31,20 +30,21 @@ interface ProfileListingProps {
 export function ProfileListing({ profiles, title = "प्रोफाइल्स", showFilters = true }: ProfileListingProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list" | "compact">("grid")
   const [sortBy, setSortBy] = useState("recent")
+
   return (
     <div className="space-y-6">
       {/* Filters */}
-      {/* {showFilters && <ProfileFilters totalProfiles={profiles?.length} activeFilters={["25-30 वर्ष", "अहमदाबाद"]} />} */}
+      {showFilters && <ProfileFilters totalProfiles={profiles.length} activeFilters={["25-30 वर्ष", "अहमदाबाद"]} />}
 
       {/* View Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-orange-600">{title}</h2>
-          <p className="text-gray-600">{profiles?.length} प्रोफाइल्स मिलीं</p>
+          <p className="text-gray-600">{profiles.length} प्रोफाइल्स मिलीं</p>
         </div>
 
-        {/* <div className="flex items-center gap-4">
-        
+        <div className="flex items-center gap-4">
+          {/* Sort Options */}
           <Select value={sortBy} onValueChange={setSortBy}>
             <SelectTrigger className="w-48">
               <SelectValue placeholder="क्रमबद्ध करें" />
@@ -58,7 +58,7 @@ export function ProfileListing({ profiles, title = "प्रोफाइल्�
             </SelectContent>
           </Select>
 
-
+          {/* View Mode Toggle */}
           <div className="flex border rounded-lg overflow-hidden">
             <Button
               variant={viewMode === "grid" ? "default" : "ghost"}
@@ -85,7 +85,7 @@ export function ProfileListing({ profiles, title = "प्रोफाइल्�
               <Grid className="h-4 w-4" />
             </Button>
           </div>
-        </div> */}
+        </div>
       </div>
 
       {/* Profiles Grid/List */}
@@ -98,21 +98,20 @@ export function ProfileListing({ profiles, title = "प्रोफाइल्�
               : "grid grid-cols-1 gap-3"
         }
       >
-        {profiles
-          ?.map((profile) => (
-            <ProfileCard
-              key={profile.id}
-              profile={profile}
-              variant={viewMode === "grid" ? "default" : viewMode === "list" ? "detailed" : "compact"}
-            />
-          ))}
+        {profiles.map((profile) => (
+          <ProfileCard
+            key={profile.id}
+            profile={profile}
+            variant={viewMode === "grid" ? "default" : viewMode === "list" ? "detailed" : "compact"}
+          />
+        ))}
       </div>
 
       {/* Load More */}
       <div className="text-center pt-8">
-        {/* <Button variant="outline" className="px-8 bg-transparent">
+        <Button variant="outline" className="px-8 bg-transparent">
           और प्रोफाइल्स लोड करें
-        </Button> */}
+        </Button>
       </div>
     </div>
   )

@@ -42,7 +42,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-white">
       <div className="p-4">
-        <BackButton href="/" label="होम पर वापस जाएं / Go back to Home" />
+        <BackButton href="/" label="होम पर वापस जाएं" />
       </div>
 
       <div className="flex items-center justify-center p-4 pt-0">
@@ -51,10 +51,8 @@ export default function LoginPage() {
             <div className="flex justify-center mb-4">
               <Image src="/logo.png" alt="पंचाल समाज लोगो" width={80} height={80} className="rounded-full" />
             </div>
-            <CardTitle className="text-2xl font-bold text-orange-600">लॉगिन करें / Login</CardTitle>
+            <CardTitle className="text-2xl font-bold text-orange-600">लॉगिन करें</CardTitle>
             <CardDescription>अपने खाते में प्रवेश करने के लिए अपनी जानकारी दर्ज करें</CardDescription>
-            <CardDescription>Enter your details to access your account</CardDescription>
-
           </CardHeader>
           <form onSubmit={handleLogin}>
             <CardContent className="space-y-4">
@@ -63,11 +61,11 @@ export default function LoginPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email">ईमेल / Your email</Label>
+                <Label htmlFor="email">ईमेल या मोबाइल नंबर</Label>
                 <Input
                   id="email"
                   type="text"
-                  placeholder="आपका ईमेल"
+                  placeholder="आपका ईमेल या मोबाइल नंबर"
                   className="border-orange-200 focus:border-orange-400"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -75,7 +73,7 @@ export default function LoginPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">पासवर्ड / Your password</Label>
+                <Label htmlFor="password">पासवर्ड</Label>
                 <Input
                   id="password"
                   type="password"
@@ -88,19 +86,18 @@ export default function LoginPage() {
               </div>
               <div className="flex justify-end">
                 <Link href="/forgot-password" className="text-sm text-orange-600 hover:text-orange-700 hover:underline">
-                  पासवर्ड भूल गए / Forgot password ?
+                  पासवर्ड भूल गए?
                 </Link>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
               <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700" disabled={isLoading}>
-                {isLoading ? "लॉगिन हो रहा है..." : "लॉगिन करें / Login"}
+                {isLoading ? "लॉगिन हो रहा है..." : "लॉगिन करें"}
               </Button>
               <div className="text-center text-sm text-gray-600">
-                खाता नहीं है / Don’t have an account?{" "}
-                <br />
+                खाता नहीं है?{" "}
                 <Link href="/signup" className="text-orange-600 hover:text-orange-700 hover:underline">
-                  साइन अप करें /  Sign up
+                  साइन अप करें
                 </Link>
               </div>
             </CardFooter>

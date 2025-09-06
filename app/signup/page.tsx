@@ -74,9 +74,9 @@ export default function SignupPage() {
                 </ol>
               </div>
             </CardContent>
-            <CardContent aria-disabled={true} className="opacity-50 pointer-events-none">
+            <CardContent>
               <Link href="/signup/other">
-                <Button disabled={true} className="w-full bg-gray-600 hover:bg-gray-700">अन्य सदस्य के रूप में साइन अप करें</Button>
+                <Button className="w-full bg-gray-600 hover:bg-gray-700">अन्य सदस्य के रूप में साइन अप करें</Button>
               </Link>
             </CardContent>
           </Card>
