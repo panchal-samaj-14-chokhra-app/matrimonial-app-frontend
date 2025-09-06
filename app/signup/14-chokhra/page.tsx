@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -12,9 +12,33 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Mail, Shield, UserPlus } from "lucide-react"
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
-import { useSignupFlow } from "@/hooks/use-query-mutations"
+import { useChokhlas, useSignupFlow } from "@/hooks/use-query-mutations"
 
 export default function ChokhraMemberSignup() {
+
+
+  const { data, isLoading, error: apiError } = useChokhlas()
+  console.log("Chokhlas API Error:", apiError)
+
+  const chokhlaOptions = useMemo(() => {
+    if (!data) return [];
+    // 1. Map existing Chokhlas to { id, name }
+    const mapped = data?.map((item) => ({
+      id: item?.id,
+      name: item?.name,
+    })) || [];
+
+    mapped.push({
+      id: "f3c94c9e-44c2-4a98-8460-92e8c4f5e00e",
+      name: 'Another chokhra (अन्य चोखरा)',
+    })
+
+    return mapped
+  }, [data, !isLoading])
+
+
+  console.log("Chokhla Options:", chokhlaOptions, data)
+
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
   const [email, setEmail] = useState("")
@@ -85,9 +109,8 @@ export default function ChokhraMemberSignup() {
         {[1, 2, 3].map((step) => (
           <div key={step} className="flex items-center">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                currentStep >= step ? "bg-orange-600 text-white" : "bg-gray-200 text-gray-600"
-              }`}
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${currentStep >= step ? "bg-orange-600 text-white" : "bg-gray-200 text-gray-600"
+                }`}
             >
               {step === 1 && <Mail className="w-4 h-4" />}
               {step === 2 && <Shield className="w-4 h-4" />}
@@ -214,15 +237,36 @@ export default function ChokhraMemberSignup() {
 
               <div className="space-y-2">
                 <Label htmlFor="familyId">चोखरा आईडी</Label>
-                <Input
-                  id="familyId"
-                  type="text"
-                  value={formData.familyId}
-                  onChange={(e) => setFormData({ ...formData, familyId: e.target.value })}
-                  placeholder="आपकी चोखरा आईडी दर्ज करें"
-                  className="border-orange-200 focus:border-orange-400"
-                  required
-                />
+                {isLoading ? (
+                  <div className="flex items-center space-x-2 py-2">
+                    <span className="animate-spin rounded-full h-5 w-5 border-t-2 border-orange-600 border-solid" />
+                    <span className="text-orange-600 text-sm">लोड हो रहा है...</span>
+                  </div>
+                ) : apiError ? (
+                  <div className="text-red-600 text-sm py-2">चोखला लोड करने में त्रुटि: {apiError.message || 'Unknown error'}</div>
+                ) : (
+                  <div className="relative">
+                    <select
+                      id="familyId"
+                      value={formData.familyId}
+                      onChange={(e) => setFormData({ ...formData, familyId: e.target.value })}
+                      className="w-full rounded-lg border border-orange-300 bg-white px-4 py-2 text-base focus:border-orange-500 focus:ring-2 focus:ring-orange-100 transition-all appearance-none"
+                      required
+                    >
+                      <option value="" disabled>
+                        -- चोखरा चुनें --
+                      </option>
+                      {chokhlaOptions?.map((chokhla) => (
+                        <option key={chokhla.id} value={chokhla.id}>
+                          {chokhla.name}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-orange-400">
+                      ▼
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">

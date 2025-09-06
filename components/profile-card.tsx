@@ -8,6 +8,7 @@ import { ProfileIdBadge } from "./profile-id-badge"
 
 interface ProfileCardProps {
   profile: {
+    profileNumber: number;
     id: string
     name: string
     age: number
@@ -177,7 +178,7 @@ export function ProfileCard({ profile, variant = "default", showActions = true }
           {profile.isVerified && <Badge className="bg-green-500 hover:bg-green-600">सत्यापित</Badge>}
         </div>
         <div className="absolute top-2 left-2">
-          <ProfileIdBadge profileId={profile.id} variant="secondary" className="bg-white/90" />
+          <ProfileIdBadge profileId={profile?.profileNumber?.toString()?.padStart(6, '0')} variant="secondary" className="bg-white/90" />
         </div>
       </div>
 
@@ -212,7 +213,7 @@ export function ProfileCard({ profile, variant = "default", showActions = true }
                   विवरण देखें
                 </Button>
               </Link>
-              <Button size="icon" className="bg-pink-500 hover:bg-pink-600">
+              <Button disabled={true} size="icon" className="bg-pink-500 hover:bg-pink-600">
                 <Heart className="h-4 w-4" />
               </Button>
             </div>
