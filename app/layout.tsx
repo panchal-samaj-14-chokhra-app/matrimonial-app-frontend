@@ -2,7 +2,6 @@ import type { Metadata } from "next"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import "./globals.css"
-import { FloatingNav } from "@/components/floating-nav"
 import { QueryProvider } from "@/components/providers/query-provider"
 import { NextAuthProvider } from "@/components/providers/session-provider"
 
@@ -23,6 +22,7 @@ export default function RootLayout({
         <NextAuthProvider>
           <QueryProvider>
             {children}
+            {/* <FloatingNav /> */}
           </QueryProvider>
         </NextAuthProvider>
       </body>

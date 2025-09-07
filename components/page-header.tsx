@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 import { BreadcrumbNav } from "./breadcrumb-nav"
 import { BackButton } from "./back-button"
+import Image from "next/image"
 
 interface PageHeaderProps {
   title: string
@@ -21,14 +22,18 @@ export function PageHeader({
 }: PageHeaderProps) {
   return (
     <div className="mb-6">
-      {showBreadcrumb && <BreadcrumbNav />}
-      {showBack && <BackButton href={backHref} />}
+      {/* {showBreadcrumb && <BreadcrumbNav />} */}
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{title}</h1>
-          {description && <p className="text-gray-600 text-sm sm:text-base">{description}</p>}
+        <div className="flex items-center gap-4">
+          <Image src="/logo.png" alt="Panchal Samaj Logo" width={60} height={60} className="rounded-full" />
+          <div>
+            <h1 className="text-3xl font-bold text-orange-600">{title}</h1>
+            {description && <p className="text-gray-600 mt-1">{description}</p>}
+          </div>
         </div>
+        {showBack && <BackButton href={backHref} />}
+
         {children && <div className="flex-shrink-0">{children}</div>}
       </div>
     </div>

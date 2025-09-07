@@ -1,7 +1,19 @@
-import { authService, profileService } from "@/lib/api-services"
-import { useMutation, useQuery } from "@tanstack/react-query"
+// Hook to get profile by profileID
+'use client'
+import { authService, chokhlaService, profileService } from "@/lib/api-services"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "@/hooks/use-toast"
 
+
+export const useProfileByProfileID = (profileID: string | undefined) => {
+
+  return useQuery({
+    queryKey: ["profile-by-profile-id", profileID],
+    queryFn: () => profileService.getProfileByProfileID(profileID!),
+    enabled: !!profileID,
+    retry: false,
+  })
+}
 export const useCheckUserExists = (userId: string | undefined) => {
   return useQuery({
     queryKey: ["userExists", userId],
@@ -139,4 +151,109 @@ export const useMatrimonialProfile = () => {
   return {
     createProfile: createProfileMutation,
   }
+}
+
+
+export const useEditMatrimonialProfile = () => {
+  const editProfileMutation = useMutation(
+    {
+      mutationFn: ({ id, data }: { id: string; data: any; }) =>
+        profileService.updateMatrimonialProfile(id, data),
+
+      onSuccess: () => {
+        toast({
+          title: "सफल",
+          description: "आपकी प्रोफाइल सफलतापूर्वक अपडेट हो गई है",
+        })
+      },
+
+      onError: (error: any) => {
+        toast({
+          title: "त्रुटि",
+          description: error.response?.data?.message || "प्रोफाइल अपडेट करने में समस्या हुई",
+          variant: "destructive",
+        })
+      },
+    })
+
+  return {
+    editProfile: editProfileMutation,
+  }
+}
+
+export const useMatrimonialProfileByUserId = (userId: string, enabled = true) => {
+  return useQuery({
+    queryKey: ['matrimonial-profile', userId],
+    queryFn: () => profileService.getProfileByUserID(userId),
+    enabled: !!userId && enabled,
+  })
+}
+
+
+
+
+export const useDeleteProfileImage = () => {
+  return useMutation({
+    mutationFn: (imageId: string) => profileService.deleteProfileImageById(imageId),
+    onSuccess: (data) => {
+      toast({
+        title: 'सफल',
+        description: data.message || 'इमेज सफलतापूर्वक हटाई गई।',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'त्रुटि',
+        description: error.response?.data?.message || 'इमेज हटाने में समस्या हुई।',
+        variant: 'destructive',
+      });
+    },
+  });
+};
+
+
+
+
+export const useEditProfileImage = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ profileId, images, userId }: { profileId: string; images: File[], userId: string }) => {
+      return profileService.editProfileImage(profileId, images);
+    },
+    onSuccess: (data, variables) => {
+      toast({
+        title: 'सफल',
+        description: data.message || 'इमेज सफलतापूर्वक अपलोड हो गई।',
+      });
+      queryClient.invalidateQueries({ queryKey: ['matrimonial-profile', variables.userId] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'त्रुटि',
+        description: error.response?.data?.message || 'इमेज अपलोड करने में समस्या हुई।',
+        variant: 'destructive',
+      });
+    },
+  });
+};
+
+
+
+export const useAllMatrimonialProfiles = () => {
+  return useQuery({
+    queryKey: ['all-matrimonial-profiles'],
+    queryFn: () => profileService.getAllProfiles(),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+
+    enabled: true,
+  })
+}
+
+export const useChokhlas = () => {
+  return useQuery({
+    queryKey: ['chokhlas'],
+    queryFn: () => chokhlaService.getChokhlas(),
+    enabled: true,
+  })
 }
