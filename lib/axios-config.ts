@@ -35,12 +35,6 @@ api.interceptors.response.use(
     // Calculate request duration
     const duration = new Date().getTime() - response.config.metadata?.startTime?.getTime()
 
-    console.log("[v0] API Response:", {
-      status: response.status,
-      url: response.config.url,
-      duration: `${duration}ms`,
-      data: response.data,
-    })
 
     return response
   },

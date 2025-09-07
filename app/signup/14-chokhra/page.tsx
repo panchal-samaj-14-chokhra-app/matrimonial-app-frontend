@@ -37,8 +37,6 @@ export default function ChokhraMemberSignup() {
   }, [data, !isLoading])
 
 
-  console.log("Chokhla Options:", chokhlaOptions, data)
-
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
   const [email, setEmail] = useState("")
