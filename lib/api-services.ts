@@ -222,11 +222,41 @@ export const profileService = {
     return response.data
   },
 
-  getAllProfiles: async (): Promise<Profile[]> => {
-    const response = await api.get("/metrimonial/profile-list")
+  // Create new profile
+  createProfile: async (
+    data: Omit<Profile, "id" | "profileId" | "userId" | "createdAt" | "updatedAt">,
+  ): Promise<Profile> => {
+    const response = await api.post("/profiles", data)
     return response.data
   },
 
+  // Update profile
+  updateProfile: async (id: string, data: Partial<Profile>): Promise<Profile> => {
+    const response = await api.put(`/profiles/${id}`, data)
+    return response.data
+  },
+
+  // Delete profile
+  deleteProfile: async (id: string): Promise<void> => {
+    await api.delete(`/profiles/${id}`)
+  },
+
+  // Upload profile photos
+  uploadPhotos: async (profileId: string, files: File[]): Promise<{ photos: string[] }> => {
+    const formData = new FormData()
+    files.forEach((file) => formData.append("photos", file))
+
+    const response = await api.post(`/profiles/${profileId}/photos`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+    return response.data
+  },
+
+  // Get user's own profile
+  getMyProfile: async (): Promise<Profile> => {
+    const response = await api.get("/profiles/me")
+    return response.data
+  },
 
   createMatrimonialProfile: async (data: MatrimonialProfileData, images?: File[]): Promise<any> => {
     const formData = new FormData()
@@ -250,42 +280,6 @@ export const profileService = {
     })
     return response.data
   },
-
-  getProfileByUserID: async (userId: string): Promise<any> => {
-    const response = await api.get(`/metrimonial/${userId}`)
-    return response.data
-  },
-  getProfileByProfileID: async (profileID: string): Promise<any> => {
-    const response = await api.get(`/metrimonial/get-profile/${profileID}`);
-    return response.data;
-  }
-  ,
-  updateMatrimonialProfile: async (profileID: string, data: any): Promise<any> => {
-    const response = await api.patch(`/metrimonial/update-profile/${profileID}`, data)
-    return response.data
-  },
-
-  deleteProfileImageById: async (imageId: string) => {
-    const response = await api.delete(`/metrimonial/image/${imageId}`)
-    return response.data
-  },
-
-  editProfileImage: async (profileId: string, images: File[]): Promise<any> => {
-    const formData = new FormData();
-    images.forEach((image) => {
-      formData.append("images", image);
-    });
-
-    const response = await api.post(
-      `/metrimonial/update/profile-image/${profileId}`,
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
-    return response.data;
-  }
-
 }
 
 export const adminService = {
@@ -320,15 +314,6 @@ export const adminService = {
     marriedProfiles: number
   }> => {
     const response = await api.get("/admin/analytics")
-    return response.data
-  },
-}
-
-
-export const chokhlaService = {
-  // Get all chokhlas
-  getChokhlas: async (): Promise<{ id: string; name: string; description: string }[]> => {
-    const response = await api.get("/chokhla")
     return response.data
   },
 }

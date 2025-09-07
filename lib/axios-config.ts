@@ -18,8 +18,15 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+
     // Add request timestamp for debugging
     config.metadata = { startTime: new Date() }
+
+    console.log("[v0] API Request:", {
+      method: config.method?.toUpperCase(),
+      url: config.url,
+      data: config.data,
+    })
 
     return config
   },

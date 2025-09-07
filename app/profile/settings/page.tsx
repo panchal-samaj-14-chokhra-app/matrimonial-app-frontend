@@ -51,7 +51,7 @@ export default function ProfileSettingsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Profile Overview */}
           <div className="space-y-6">
-            {/* <Card>
+            <Card>
               <CardContent className="p-6 text-center">
                 <div className="relative inline-block mb-4">
                   <Image
@@ -79,7 +79,7 @@ export default function ProfileSettingsPage() {
                 </div>
                 <p className="text-xs text-gray-500 mt-2">अंतिम सक्रिय: {userProfile.lastActive}</p>
               </CardContent>
-            </Card> */}
+            </Card>
 
             {/* Quick Actions */}
             <Card>
@@ -87,19 +87,19 @@ export default function ProfileSettingsPage() {
                 <CardTitle className="text-lg text-orange-600">त्वरित कार्य</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Link aria-disabled href="/profile/edit">
-                  <Button disabled variant="outline" className="w-full justify-start bg-transparent">
+                <Link href="/profile/edit">
+                  <Button variant="outline" className="w-full justify-start bg-transparent">
                     <Edit className="h-4 w-4 mr-2" />
                     प्रोफाइल संपादित करें
                   </Button>
                 </Link>
-                <Link aria-disabled href={`/profiles/${userProfile.id}`}>
-                  <Button disabled variant="outline" className="w-full justify-start bg-transparent">
+                <Link href={`/profiles/${userProfile.id}`}>
+                  <Button variant="outline" className="w-full justify-start bg-transparent">
                     <Eye className="h-4 w-4 mr-2" />
                     प्रोफाइल देखें
                   </Button>
                 </Link>
-                <Button disabled variant="outline" className="w-full justify-start bg-transparent">
+                <Button variant="outline" className="w-full justify-start bg-transparent">
                   <Shield className="h-4 w-4 mr-2" />
                   गोपनीयता सेटिंग्स
                 </Button>
@@ -154,7 +154,7 @@ export default function ProfileSettingsPage() {
             </Card>
 
             {/* Profile Status */}
-            {/* <Card>
+            <Card>
               <CardHeader>
                 <CardTitle className="text-xl text-orange-600 flex items-center gap-2">
                   <User className="h-5 w-5" />
@@ -197,10 +197,10 @@ export default function ProfileSettingsPage() {
                   <p className="text-xs text-gray-600 ml-6">प्रोफाइल को अस्थायी रूप से निष्क्रिय करें</p>
                 </div>
               </CardContent>
-            </Card> */}
+            </Card>
 
             {/* Contact Information */}
-            {/* <Card>
+            <Card>
               <CardHeader>
                 <CardTitle className="text-xl text-orange-600 flex items-center gap-2">
                   <Phone className="h-5 w-5" />
@@ -235,10 +235,10 @@ export default function ProfileSettingsPage() {
                   </Button>
                 </div>
               </CardContent>
-            </Card> */}
+            </Card>
 
             {/* Account Management */}
-            {/* <Card aria-disabled={true} className="border-red-200">
+            <Card className="border-red-200">
               <CardHeader>
                 <CardTitle className="text-xl text-red-600 flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5" />
@@ -271,10 +271,10 @@ export default function ProfileSettingsPage() {
                   </Button>
                 </div>
               </CardContent>
-            </Card> */}
+            </Card>
 
             {/* Notification Settings */}
-            {/* <Card aria-disabled={true} >
+            <Card>
               <CardHeader>
                 <CardTitle className="text-xl text-orange-600 flex items-center gap-2">
                   <Settings className="h-5 w-5" />
@@ -315,7 +315,7 @@ export default function ProfileSettingsPage() {
                   <Switch defaultChecked />
                 </div>
               </CardContent>
-            </Card> */}
+            </Card>
           </div>
         </div>
       </div>

@@ -1,62 +1,111 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ProfileListing } from "@/components/profile-listing"
-import { Loader2, User, Mail, Edit, LogOut, X } from "lucide-react"
-import { useAllMatrimonialProfiles, useCheckUserExists } from "@/hooks/use-query-mutations"
+import { Loader2, User, Mail, Edit, LogOut } from "lucide-react"
+import { useCheckUserExists } from "@/hooks/use-query-mutations"
 import { Card, CardContent } from "@/components/ui/card"
 
-// Sample profile dataxx
-
+// Sample profile data
+const profiles = [
+  {
+    id: "PS25101",
+    name: "राज पंचाल",
+    age: 28,
+    location: "अहमदाबाद, गुजरात",
+    education: "इंजीनियर",
+    profession: "सॉफ्टवेयर डेवलपर",
+    image: "/placeholder.svg?height=200&width=200",
+    isVerified: true,
+    salary: "₹8-10 लाख प्रति वर्ष",
+    height: "5'8\"",
+    lastActive: "2 दिन पहले",
+  },
+  {
+    id: "PS25102",
+    name: "प्रिया पंचाल",
+    age: 25,
+    location: "सूरत, गुजरात",
+    education: "एमबीए",
+    profession: "मार्केटिंग मैनेजर",
+    image: "/placeholder.svg?height=200&width=200",
+    isVerified: true,
+    salary: "₹6-8 लाख प्रति वर्ष",
+    height: "5'4\"",
+    lastActive: "1 दिन पहले",
+  },
+  {
+    id: "PS25103",
+    name: "अमित पंचाल",
+    age: 30,
+    location: "राजकोट, गुजरात",
+    education: "डॉक्टर",
+    profession: "चिकित्सक",
+    image: "/placeholder.svg?height=200&width=200",
+    isVerified: false,
+    salary: "₹12-15 लाख प्रति वर्ष",
+    height: "5'10\"",
+    lastActive: "5 दिन पहले",
+  },
+  {
+    id: "PS25104",
+    name: "सुनीता पंचाल",
+    age: 26,
+    location: "वडोदरा, गुजरात",
+    education: "बी.कॉम",
+    profession: "अकाउंटेंट",
+    image: "/placeholder.svg?height=200&width=200",
+    isVerified: true,
+    salary: "₹4-6 लाख प्रति वर्ष",
+    height: "5'3\"",
+    lastActive: "आज",
+  },
+  {
+    id: "PS25105",
+    name: "विकास पंचाल",
+    age: 32,
+    location: "गांधीनगर, गुजरात",
+    education: "एमटेक",
+    profession: "प्रोजेक्ट मैनेजर",
+    image: "/placeholder.svg?height=200&width=200",
+    isVerified: true,
+    salary: "₹15-20 लाख प्रति वर्ष",
+    height: "5'9\"",
+    lastActive: "3 दिन पहले",
+  },
+  {
+    id: "PS25106",
+    name: "मीरा पंचाल",
+    age: 24,
+    location: "अहमदाबाद, गुजरात",
+    education: "बीएड",
+    profession: "शिक्षिका",
+    image: "/placeholder.svg?height=200&width=200",
+    isVerified: true,
+    salary: "₹3-5 लाख प्रति वर्ष",
+    height: "5'2\"",
+    lastActive: "1 सप्ताह पहले",
+  },
+]
 
 export default function ProfilesClient() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const [clickOnCard, setClickOnCard] = useState(false);
-  function transformProfile(profile) {
-    return {
-      id: profile.id,
-      profileNumber: profile.profileNumber,
-      name: `${profile.name || ''}`,
-      age: profile.age,
-      location: `${profile.district || ''}`,
-      education: profile.education || '',
-      profession: profile.occupation || '',
-      image: profile.images?.[0]?.url || '/placeholder.svg?height=200&width=200',
-      isVerified: profile.approvalStatus === 'APPROVED',
-      salary: `₹${profile.income || profile.annualFamilyIncome || 0} प्रति वर्ष`,
-      height: profile.height ? `${Math.floor(profile.height / 12)}'${profile.height % 12}"` : '',
-      lastActive: '2 दिन पहले',
-    };
-  }
-
-
-  const {
-    data: apiProfiles,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useAllMatrimonialProfiles();
-
-  const profiles = useMemo(() => {
-    if (!apiProfiles?.data) return [];
-
-    return apiProfiles.data
-
-      .map(transformProfile); // ✅ then transform each
-  }, [apiProfiles?.data, session?.user.id]);
-
 
   const {
     data: userExistsData,
     isLoading: isCheckingUser,
     error: userCheckError,
   } = useCheckUserExists(session?.user?.id)
+
+  console.log("[v0] ProfilesClient - profiles data:", profiles)
+  console.log("[v0] ProfilesClient - profiles length:", profiles.length)
+  console.log("[v0] ProfilesClient - session:", session)
+  console.log("[v0] ProfilesClient - userExistsData:", userExistsData)
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -91,7 +140,6 @@ export default function ProfilesClient() {
     return null
   }
 
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-white">
       {/* Header */}
@@ -106,87 +154,57 @@ export default function ProfilesClient() {
               </div>
             </div>
 
-
-            <div className="relative inline-block text-left">
-              {/* User Icon Button */}
-              <div
-                className="w-10 h-10 bg-orange-600 rounded-full flex items-center justify-center cursor-pointer"
-                onClick={() => setClickOnCard((prev) => !prev)}
-              >
-                <User className="h-5 w-5 text-white" />
-              </div>
-
-              {/* Dropdown Card */}
-              {clickOnCard && (
-                <div className="absolute right-0 mt-2 w-72 sm:w-80 z-50 max-w-[110vw]">
-                  <Card className="border border-orange-200  shadow-sm rounded-md">
-                    <CardContent className="p-4 relative">
-                      {/* Close (X) Button */}
-                      <button
-                        onClick={() => setClickOnCard(false)}
-                        className="absolute top-2 right-2 text-orange-500 hover:text-orange-700"
-                        aria-label="Close"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-
-                      {/* User Info Header */}
-                      <div className="flex items-center gap-3 mb-4">
-
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-orange-800 text-sm">प्रोफाइल / Profile</p>
-                          <p className="text-xs text-orange-600 truncate">{session?.user?.email}</p>
-                        </div>
-                      </div>
-
-                      {/* Email Section */}
-                      <div className="flex items-center gap-2 p-2 rounded bg-white/70 mb-4">
-                        <Mail className="h-4 w-4 text-orange-600" />
-                        <div className="flex-1">
-                          <p className="text-xs font-medium text-orange-800">ईमेल / Email</p>
-                          <p className="text-xs text-orange-600 truncate">{session?.user?.email}</p>
-                        </div>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="flex flex-col sm:flex-row gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="flex-1 text-xs border-orange-300 text-orange-700 hover:bg-orange-100"
-                          onClick={() => {
-                            router.push("/profile/edit");
-                            setClickOnCard(false);
-                          }}
-                        >
-                          <Edit className="h-3 w-3 mr-1" />
-                          संपादित करें / Edit
-                        </Button>
-
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="flex-1 text-xs border-red-300 text-red-700 hover:bg-red-50"
-                          onClick={() => signOut({ callbackUrl: "/login" })}
-                        >
-                          <LogOut className="h-3 w-3 mr-1" />
-                          साइन आउट / log Out
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
+            <Card className="w-full lg:w-80 border-orange-200 bg-orange-50">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-orange-600 rounded-full flex items-center justify-center">
+                    <User className="h-5 w-5 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-orange-800">प्रोफाइल / Profile</p>
+                    <p className="text-xs text-orange-600">{session?.user?.email}</p>
+                  </div>
                 </div>
-              )}
-            </div>
 
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 p-2 rounded bg-white/50">
+                    <Mail className="h-4 w-4 text-orange-600" />
+                    <div className="flex-1">
+                      <p className="text-xs font-medium text-orange-800">ईमेल / Email</p>
+                      <p className="text-xs text-orange-600">{session?.user?.email}</p>
+                    </div>
+                  </div>
 
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex-1 text-xs border-orange-300 text-orange-700 hover:bg-orange-100 bg-transparent"
+                      onClick={() => router.push("/profile/edit")}
+                    >
+                      <Edit className="h-3 w-3 mr-1" />
+                      संपादित करें / Edit
+                    </Button>
 
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex-1 text-xs border-red-300 text-red-700 hover:bg-red-50 bg-transparent"
+                      onClick={() => signOut({ callbackUrl: "/login" })}
+                    >
+                      <LogOut className="h-3 w-3 mr-1" />
+                      साइन आउट / Sign Out
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {profiles?.length > 0 ? (
+        {profiles.length > 0 ? (
           <ProfileListing profiles={profiles} />
         ) : (
           <div className="text-center py-12">

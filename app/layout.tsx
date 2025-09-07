@@ -23,7 +23,6 @@ export default function RootLayout({
         <NextAuthProvider>
           <QueryProvider>
             {children}
-         <FloatingNav /> 
           </QueryProvider>
         </NextAuthProvider>
       </body>
