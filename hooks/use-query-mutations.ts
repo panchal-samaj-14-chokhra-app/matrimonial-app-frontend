@@ -3,6 +3,7 @@
 import { authService, chokhlaService, profileService } from "@/lib/api-services"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "@/hooks/use-toast"
+import { useSession } from "next-auth/react"
 
 
 export const useProfileByProfileID = (profileID: string | undefined) => {
@@ -130,10 +131,19 @@ export const useForgotPasswordFlow = () => {
 }
 
 export const useMatrimonialProfile = () => {
+  const queryClient = useQueryClient()
+  const { data: session } = useSession()
+  const userId = session?.user?.id
   const createProfileMutation = useMutation({
     mutationFn: ({ data, images }: { data: any; images?: File[] }) =>
       profileService.createMatrimonialProfile(data, images),
     onSuccess: () => {
+      if (userId) {
+        queryClient.invalidateQueries({
+          queryKey: ["userExists", userId],
+        })
+      }
+
       toast({
         title: "सफल",
         description: "आपकी प्रोफाइल सफलतापूर्वक बनाई गई है",
