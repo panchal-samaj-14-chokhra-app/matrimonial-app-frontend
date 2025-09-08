@@ -4,6 +4,7 @@ import { authService, chokhlaService, profileService } from "@/lib/api-services"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "@/hooks/use-toast"
 import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 
 export const useProfileByProfileID = (profileID: string | undefined) => {
@@ -15,14 +16,22 @@ export const useProfileByProfileID = (profileID: string | undefined) => {
     retry: false,
   })
 }
-export const useCheckUserExists = (userId: string | undefined) => {
+// useCheckUserExists.ts
+export const useCheckUserExists = (
+  userId: string | undefined,
+  options = {}
+) => {
   return useQuery({
     queryKey: ["userExists", userId],
     queryFn: () => profileService.checkUserExists(userId!),
     enabled: !!userId,
     retry: false,
+    refetchOnMount: "always",
+    staleTime: 0,
+    ...options,
   })
 }
+
 
 export const useSignupFlow = () => {
   const sendOtpMutation = useMutation({
@@ -130,29 +139,52 @@ export const useForgotPasswordFlow = () => {
   }
 }
 
+
 export const useMatrimonialProfile = () => {
   const queryClient = useQueryClient()
+  const router = useRouter()
   const { data: session } = useSession()
   const userId = session?.user?.id
-  const createProfileMutation = useMutation({
-    mutationFn: ({ data, images }: { data: any; images?: File[] }) =>
-      profileService.createMatrimonialProfile(data, images),
-    onSuccess: () => {
-      if (userId) {
-        queryClient.invalidateQueries({
-          queryKey: ["userExists", userId],
-        })
-      }
 
-      toast({
-        title: "सफल",
-        description: "आपकी प्रोफाइल सफलतापूर्वक बनाई गई है",
-      })
+  const createProfileMutation = useMutation({
+    mutationFn: async ({
+      data,
+      images,
+    }: {
+      data: any
+      images?: File[]
+    }) => {
+      return await profileService.createMatrimonialProfile(data, images)
     },
+
+    onSuccess: async () => {
+      try {
+
+        if (userId) {
+          await queryClient.invalidateQueries({ queryKey: ["userExists", userId] });
+          await queryClient.refetchQueries({
+            queryKey: ["userExists", userId],
+            exact: true,
+          });
+        }
+
+        // 2. Show success toast
+        toast({
+          title: "सफल",
+          description: "आपकी प्रोफाइल सफलतापूर्वक बनाई गई है",
+        })
+
+        router.push("/profiles");
+      } catch (error) {
+        console.error("Post-success flow error:", error)
+      }
+    },
+
     onError: (error: any) => {
       toast({
         title: "त्रुटि",
-        description: error.response?.data?.message || "प्रोफाइल बनाने में समस्या हुई",
+        description:
+          error.response?.data?.message || "प्रोफाइल बनाने में समस्या हुई",
         variant: "destructive",
       })
     },
@@ -162,6 +194,7 @@ export const useMatrimonialProfile = () => {
     createProfile: createProfileMutation,
   }
 }
+
 
 
 export const useEditMatrimonialProfile = () => {
@@ -255,7 +288,7 @@ export const useAllMatrimonialProfiles = () => {
     queryKey: ['all-matrimonial-profiles'],
     queryFn: () => profileService.getAllProfiles(),
     staleTime: 1000 * 60 * 5, // 5 minutes
-
+    refetchOnMount: "always",
     enabled: true,
   })
 }

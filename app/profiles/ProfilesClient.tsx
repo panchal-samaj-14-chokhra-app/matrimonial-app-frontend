@@ -51,13 +51,13 @@ export default function ProfilesClient() {
       .map(transformProfile); // ✅ then transform each
   }, [apiProfiles?.data, session?.user.id]);
 
-
   const {
     data: userExistsData,
     isLoading: isCheckingUser,
-    error: userCheckError,
-  } = useCheckUserExists(session?.user?.id)
-
+  } = useCheckUserExists(session?.user?.id, {
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+  })
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login")
