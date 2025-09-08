@@ -216,7 +216,9 @@ export default function CreateEditProfilePage({ isEdit }: { isEdit: boolean }) {
                             title: "सफलता",
                             description: "आपकी प्रोफाइल सफलतापूर्वक बनाई गई है।",
                         })
-
+                        setTimeout(() => {
+                            router.push("/profiles")
+                        }, 2000)
                     },
                     onError: (error: any) => {
                         const errorMessage = error?.response?.data?.message || error?.message || ""
