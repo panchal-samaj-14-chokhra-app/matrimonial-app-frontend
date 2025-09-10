@@ -135,19 +135,37 @@ export const useMatrimonialProfile = () => {
   const { data: session } = useSession()
   const userId = session?.user?.id
   const createProfileMutation = useMutation({
-    mutationFn: ({ data, images }: { data: any; images?: File[] }) =>
-      profileService.createMatrimonialProfile(data, images),
-    onSuccess: () => {
-      if (userId) {
-        queryClient.invalidateQueries({
-          queryKey: ["userExists", userId],
-        })
-      }
+    mutationFn: async ({
+      data,
+      images,
+    }: {
+      data: any
+      images?: File[]
+    }) => {
+      return await profileService.createMatrimonialProfile(data, images)
+    },
 
-      toast({
-        title: "सफल",
-        description: "आपकी प्रोफाइल सफलतापूर्वक बनाई गई है",
-      })
+    onSuccess: async (data) => {
+      try {
+
+        if (userId) {
+          await queryClient.invalidateQueries({ queryKey: ["userExists", userId] });
+          await queryClient.refetchQueries({
+            queryKey: ["userExists", userId],
+            exact: true,
+          });
+        }
+
+        // 2. Show success toast
+        toast({
+          title: "सफल",
+          description: "आपकी प्रोफाइल सफलतापूर्वक बनाई गई है",
+        })
+
+        router.push(`/profiles/${data?.data?.id}`);
+      } catch (error) {
+        console.error("Post-success flow error:", error)
+      }
     },
     onError: (error: any) => {
       toast({
