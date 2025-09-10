@@ -8,6 +8,7 @@ import { ProfileFilters } from "./profile-filters"
 import { Grid, List, LayoutGrid } from "lucide-react"
 
 interface Profile {
+  showImages: boolean
   id: string
   profileNumber: number;
   name: string

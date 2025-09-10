@@ -921,7 +921,7 @@ export default function CreateEditProfilePage({ isEdit }: { isEdit: boolean }) {
                                                 </div>
                                                 <Switch
                                                     onCheckedChange={(checked) => handleToggleChange('isProfileActive', checked)}
-                                                    defaultChecked={!data?.data?.isProfileActive} />
+                                                    defaultChecked={data?.data?.isProfileActive} />
                                             </div>
 
                                         </CardContent>

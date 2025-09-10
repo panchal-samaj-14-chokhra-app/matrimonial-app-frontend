@@ -20,6 +20,7 @@ export default function ProfilesClient() {
   function transformProfile(profile) {
     return {
       id: profile.id,
+      showImages: profile.showImages,
       profileNumber: profile.profileNumber,
       name: `${profile.name || ''}`,
       age: profile.age,
@@ -46,9 +47,9 @@ export default function ProfilesClient() {
   const profiles = useMemo(() => {
     if (!apiProfiles?.data) return [];
 
-    return apiProfiles?.data?.filter((Element: { isProfileActive: any }) => Element.isProfileActive)
-
-      .map(transformProfile); // ✅ then transform each
+    return apiProfiles.data
+      .filter((Element: { isProfileActive: any }) => Element.isProfileActive) // Keep only active profiles
+      .map(transformProfile); // Then transform each
   }, [apiProfiles?.data, session?.user.id]);
 
 

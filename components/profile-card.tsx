@@ -8,6 +8,7 @@ import { ProfileIdBadge } from "./profile-id-badge"
 
 interface ProfileCardProps {
   profile: {
+    showImages: boolean;
     profileNumber: number;
     id: string
     name: string
@@ -82,7 +83,7 @@ export function ProfileCard({ profile, variant = "default", showActions = true }
       <Card className="overflow-hidden hover:shadow-lg transition-shadow">
         <div className="relative">
           <Image
-            src={profile.image || "/placeholder.svg"}
+            src={(profile.showImages ? profile.image : "/placeholder.svg") || "/placeholder.svg"}
             alt={profile.name}
             width={400}
             height={300}
