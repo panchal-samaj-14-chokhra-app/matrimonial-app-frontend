@@ -10,11 +10,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Upload, User, Settings, LogOut, X } from "lucide-react"
+import { Upload, User, Settings, LogOut, X, Shield } from "lucide-react"
 import { PageHeader } from "@/components/page-header"
 import { useDeleteProfileImage, useEditMatrimonialProfile, useEditProfileImage, useMatrimonialProfile, useMatrimonialProfileByUserId } from "@/hooks/use-query-mutations"
 import { useSession, signOut } from "next-auth/react"
 import { useToast } from "@/hooks/use-toast"
+import { Switch } from "@/components/ui/switch"
+import { Separator } from "@radix-ui/react-separator"
 
 
 export default function CreateEditProfilePage({ isEdit }: { isEdit: boolean }) {
@@ -131,6 +133,12 @@ export default function CreateEditProfilePage({ isEdit }: { isEdit: boolean }) {
         return null
     }
 
+    const handleToggleChange = (field: string, checked: boolean) => {
+
+        console.log('Toggle changed:', field, checked);
+        // setFormData((prev) => ({ ...prev, [field]: checked }))
+        editProfile.mutate({ id: data.data?.id, data: { [field]: checked } })
+    }
     const handleInputChange = (field: string, value: any) => {
         setFormData((prev) => ({ ...prev, [field]: value }))
     }
@@ -383,6 +391,18 @@ export default function CreateEditProfilePage({ isEdit }: { isEdit: boolean }) {
                                                 onChange={(e) => handleInputChange("timeOfBirth", e.target.value)}
                                             />
                                         </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="placeOfBirth">जन्म स्थान / Place of Birth</Label>
+                                            <Input
+                                                required
+                                                placeholder="जन्म स्थान"
+                                                id="placeOfBirth"
+                                                type="text"
+                                                value={formData.placeOfBirth || ""}
+                                                onChange={(e) => handleInputChange("placeOfBirth", e.target.value)}
+                                            />
+                                        </div>
+
                                     </div>
 
                                     {/* Address, District, State - in order */}
@@ -828,14 +848,7 @@ export default function CreateEditProfilePage({ isEdit }: { isEdit: boolean }) {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Button disabled
-                                            variant="outline"
-                                            className="w-full justify-start bg-transparent"
-                                            onClick={() => router.push("/profile/settings")}
-                                        >
-                                            <Settings className="h-4 w-4 mr-2" />
-                                            प्रोफाइल संपादित करें / Edit Profile Settings
-                                        </Button>
+
 
                                         <Button
                                             variant="outline"
@@ -849,7 +862,74 @@ export default function CreateEditProfilePage({ isEdit }: { isEdit: boolean }) {
                                 </CardContent>
                             </Card>
 
-                            {/* Quick Stats */}
+                            {
+                                isEdit && (
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className="text-xl text-orange-600 flex items-center gap-2">
+                                                <Shield className="h-5 w-5" />
+                                                गोपनीयता सेटिंग्स / Privacy Settings
+                                            </CardTitle>
+                                            <CardDescription>
+                                                अपनी जानकारी की गोपनीयता को नियंत्रित करें / Control the privacy of your information
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="space-y-6">
+
+                                            {/* showContactInformation */}
+                                            <div className="flex items-center justify-between">
+                                                <div className="space-y-1">
+                                                    <Label className="text-base font-medium">
+                                                        संपर्क जानकारी दिखाएं / Show Contact Information
+                                                    </Label>
+                                                </div>
+                                                <Switch onCheckedChange={(checked) => handleToggleChange('showContactInformation', checked)} defaultChecked={data?.data?.showContactInformation} />
+                                            </div>
+                                            <Separator />
+
+                                            {/* showAddressDetails */}
+                                            <div className="flex items-center justify-between">
+                                                <div className="space-y-1">
+                                                    <Label className="text-base font-medium">
+                                                        पता विवरण दिखाएं / Show Address Details
+                                                    </Label>
+                                                </div>
+                                                <Switch defaultChecked={data?.data?.showAddressDetails}
+                                                    onCheckedChange={(checked) => handleToggleChange('showAddressDetails', checked)}
+
+                                                />
+                                            </div>
+                                            <Separator />
+
+                                            {/* showImages */}
+                                            <div className="flex items-center justify-between">
+                                                <div className="space-y-1">
+                                                    <Label className="text-base font-medium">
+                                                        फोटो दिखाएं / Show Photos
+                                                    </Label>
+                                                </div>
+                                                <Switch
+                                                    onCheckedChange={(checked) => handleToggleChange('showImages', checked)}
+                                                    defaultChecked={data?.data?.showImages} />
+                                            </div>
+
+                                            <div className="flex items-center justify-between">
+                                                <div className="space-y-1">
+                                                    <Label className="text-base font-medium">
+                                                        खाता निष्क्रिय करें / Disable Account
+                                                    </Label>
+                                                </div>
+                                                <Switch
+                                                    onCheckedChange={(checked) => handleToggleChange('isProfileActive', checked)}
+                                                    defaultChecked={!data?.data?.isProfileActive} />
+                                            </div>
+
+                                        </CardContent>
+                                    </Card>
+                                )
+                            }
+
+
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="text-lg text-orange-600">त्वरित जानकारी</CardTitle>
@@ -867,6 +947,10 @@ export default function CreateEditProfilePage({ isEdit }: { isEdit: boolean }) {
                                     </div>
                                 </CardContent>
                             </Card>
+
+
+
+
                         </div>
                     </div>
                 </div>

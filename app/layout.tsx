@@ -4,7 +4,8 @@ import { GeistMono } from "geist/font/mono"
 import "./globals.css"
 import { QueryProvider } from "@/components/providers/query-provider"
 import { NextAuthProvider } from "@/components/providers/session-provider"
-
+import { ToastProvider } from "@/components/ui/toast" // ✅ Import only ToastProvider
+import { Toaster } from "@/components/ui/toaster" //
 export const metadata: Metadata = {
   title: "पंचाल समाज मैट्रिमोनियल | Panchal Samaj Matrimonial",
   description: "पंचाल समाज के लिए विवाह संबंधी सेवाएं और कार्यक्रम",
@@ -21,7 +22,11 @@ export default function RootLayout({
       <body>
         <NextAuthProvider>
           <QueryProvider>
-            {children}
+            <ToastProvider>
+              {children}
+
+              <Toaster />
+            </ToastProvider>
             {/* <FloatingNav /> */}
           </QueryProvider>
         </NextAuthProvider>

@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation"
 type ImageCarouselProps = {
   images?: { url: string }[];
   name?: string;
+  showImages: boolean;
   isVerified?: boolean;
 };
 
@@ -133,7 +134,7 @@ export default function ProfileDetailPage({ params }: { params: { id: string } }
           <div className="space-y-6">
             <Card>
               <CardContent className="p-0">
-                <ImageCarousel images={profile?.data?.images} name={personalInfo["पूरा नाम / Full Name"]} isVerified={profile?.data?.isVerified} />
+                <ImageCarousel showImages={profile?.data?.showImages} images={profile?.data?.images} name={personalInfo["पूरा नाम / Full Name"]} isVerified={profile?.data?.isVerified} />
                 <div className="p-4">
                   <div className="flex gap-2 mb-4">
                     <Button disabled={true} className="flex-1 bg-orange-600 hover:bg-orange-700">
@@ -155,7 +156,8 @@ export default function ProfileDetailPage({ params }: { params: { id: string } }
                 </div>
               </CardContent>
             </Card>
-            {/* Contact Information */}
+
+
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg text-orange-600">संपर्क जानकारी</CardTitle>
@@ -163,11 +165,11 @@ export default function ProfileDetailPage({ params }: { params: { id: string } }
               <CardContent className="space-y-3">
                 <div className="flex items-center gap-3">
                   <Phone className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm">{profile?.data?.mobileNumber ?? ""}</span>
+                  <span className="text-sm">{!profile?.data?.showContactInformation ? "***********" : profile?.data?.mobileNumber ?? ""}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm">{profile?.data?.email ?? ""}</span>
+                  <span className="text-sm">{!profile?.data?.showContactInformation ? "***********" : profile?.data?.email ?? ""}</span>
                 </div>
                 <Button className="w-full mt-4 bg-green-600 hover:bg-green-700">WhatsApp पर संपर्क करें</Button>
               </CardContent>
@@ -175,7 +177,7 @@ export default function ProfileDetailPage({ params }: { params: { id: string } }
           </div>
           {/* Right Column - Grouped Details */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Address Card */}
+
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl text-orange-600">पता / Address</CardTitle>
@@ -184,12 +186,14 @@ export default function ProfileDetailPage({ params }: { params: { id: string } }
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {Object.entries(addressInfo).map(([label, value]) => (
                     <div key={label} className="mb-2">
-                      <strong>{label}:</strong> {value}
+                      <strong>{label}:</strong>     {!profile?.data?.showAddressDetails ? "***" : value}
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
+
+
 
             {/* About Me Card */}
             <Card>
@@ -272,7 +276,7 @@ export default function ProfileDetailPage({ params }: { params: { id: string } }
 
 
 
-const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, name, isVerified }) => {
+const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, name, isVerified, showImages }) => {
   const imgs = images && images.length > 0 ? images : [{ url: "/placeholder.svg" }];
   const [current, setCurrent] = useState(0);
   const [showModal, setShowModal] = useState(false);
@@ -288,7 +292,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, name, isVerified 
     <>
       <div className="relative flex items-center justify-center h-80 bg-gray-50">
         <Image
-          src={imgs[current].url || "/placeholder.svg"}
+          src={(showImages ? imgs[current].url : "/placeholder.svg") || "/placeholder.svg"}
           alt={name || `Profile Image ${current + 1}`}
           width={400}
           height={500}

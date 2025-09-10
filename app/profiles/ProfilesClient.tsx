@@ -46,7 +46,7 @@ export default function ProfilesClient() {
   const profiles = useMemo(() => {
     if (!apiProfiles?.data) return [];
 
-    return apiProfiles.data
+    return apiProfiles?.data?.filter((Element: { isProfileActive: any }) => Element.isProfileActive)
 
       .map(transformProfile); // ✅ then transform each
   }, [apiProfiles?.data, session?.user.id]);
