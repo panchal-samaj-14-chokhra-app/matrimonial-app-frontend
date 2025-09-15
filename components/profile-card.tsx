@@ -1,4 +1,18 @@
 import Image from "next/image"
+
+// Helper to convert Google Drive open links to direct image links
+function getDirectImageUrl(url: string) {
+  if (!url) return url;
+  // Google Drive open?id= or file/d/ links
+  const openIdMatch = url.match(/drive\.google\.com\/(?:open\?id=|file\/d\/)([\w-]+)/);
+  const idParamMatch = url.match(/[?&]id=([\w-]+)/);
+  const fileId = openIdMatch?.[1] || idParamMatch?.[1];
+  if (fileId) {
+    return `https://drive.google.com/uc?export=view&id=${fileId}`;
+  }
+  console.log(url)
+  return url;
+}
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -34,7 +48,7 @@ export function ProfileCard({ profile, variant = "default", showActions = true }
           <div className="flex gap-4">
             <div className="relative flex-shrink-0">
               <Image
-                src={profile.image || "/placeholder.svg"}
+                src={getDirectImageUrl(profile.image || "/placeholder.svg")}
                 alt={profile.name}
                 width={80}
                 height={80}
@@ -83,7 +97,7 @@ export function ProfileCard({ profile, variant = "default", showActions = true }
       <Card className="overflow-hidden hover:shadow-lg transition-shadow">
         <div className="relative">
           <Image
-            src={(profile.showImages ? profile.image : "/placeholder.svg") || "/placeholder.svg"}
+            src={getDirectImageUrl((profile.showImages ? profile.image : "/placeholder.svg") || "/placeholder.svg")}
             alt={profile.name}
             width={400}
             height={300}
@@ -169,7 +183,7 @@ export function ProfileCard({ profile, variant = "default", showActions = true }
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative">
         <Image
-          src={profile.image || "/placeholder.svg"}
+          src={getDirectImageUrl(profile.image || "/placeholder.svg")}
           alt={profile.name}
           width={400}
           height={300}

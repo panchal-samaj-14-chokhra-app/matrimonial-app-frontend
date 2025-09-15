@@ -268,15 +268,14 @@ export const useEditProfileImage = () => {
 
 
 
-export const useAllMatrimonialProfiles = () => {
+export const useAllMatrimonialProfiles = ({ page = 1, limit = 15 }) => {
   return useQuery({
-    queryKey: ['all-matrimonial-profiles'],
-    queryFn: () => profileService.getAllProfiles(),
-    staleTime: 1000 * 60 * 5, // 5 minutes
-
+    queryKey: ['all-matrimonial-profiles', page, limit],
+    queryFn: () => profileService.getAllProfiles({ page, limit }),
+    staleTime: 1000 * 60 * 5,
     enabled: true,
-  })
-}
+  });
+};
 
 export const useChokhlas = () => {
   return useQuery({

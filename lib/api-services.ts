@@ -222,9 +222,11 @@ export const profileService = {
     return response.data
   },
 
-  getAllProfiles: async (): Promise<Profile[]> => {
-    const response = await api.get("/metrimonial/profile-list")
-    return response.data
+  getAllProfiles: async ({ page = 1, limit = 15 } = {}): Promise<{ data: Profile[]; totalCount: number }> => {
+    const response = await api.get("/metrimonial/profile-list", {
+      params: { page, limit },
+    });
+    return response.data; 
   },
 
 
