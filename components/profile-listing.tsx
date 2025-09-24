@@ -115,5 +115,3 @@ export function ProfileListing({ profiles, title = "प्रोफाइल्�
     </div>
   )
 }
-
-
