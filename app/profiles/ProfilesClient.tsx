@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ProfileListing } from "@/components/profile-listing"
-import { Loader2, User, Mail, Edit, LogOut, X } from "lucide-react"
+import { Loader2, User, Mail, Edit, LogOut, X, ChevronsLeft, ChevronsRight } from "lucide-react"
 import { useAllMatrimonialProfiles, useCheckUserExists } from "@/hooks/use-query-mutations"
 import { Card, CardContent } from "@/components/ui/card"
 
@@ -197,6 +197,24 @@ export default function ProfilesClient() {
             <div className="flex justify-center items-center mt-8">
               <Pagination>
                 <PaginationContent>
+                  {/* Previous 10 Pages Button */}
+                  <PaginationItem>
+                    <PaginationLink
+                      href="#"
+                      isActive={false}
+                      onClick={e => {
+                        e.preventDefault();
+                        setCurrentPage(Math.max(1, currentPage - 10));
+                      }}
+                      className={currentPage <= 10 ? 'pointer-events-none opacity-50' : ''}
+                    >
+                      <span className="flex items-center">
+                        <ChevronsLeft className="w-5 h-5" />
+                       
+                      </span>
+                    </PaginationLink>
+                  </PaginationItem>
+
                   <PaginationItem>
                     <PaginationPrevious
                       href="#"
@@ -281,6 +299,24 @@ export default function ProfilesClient() {
                       aria-disabled={currentPage >= totalPages}
                       className={currentPage >= totalPages ? 'pointer-events-none opacity-50' : ''}
                     />
+                  </PaginationItem>
+
+                  {/* Next 10 Pages Button */}
+                  <PaginationItem>
+                    <PaginationLink
+                      href="#"
+                      isActive={false}
+                      onClick={e => {
+                        e.preventDefault();
+                        setCurrentPage(Math.min(totalPages, currentPage + 10));
+                      }}
+                      className={currentPage > totalPages - 10 ? 'pointer-events-none opacity-50' : ''}
+                    >
+                      <span className="flex items-center">
+                        <ChevronsRight className="w-5 h-5" />
+                       
+                      </span>
+                    </PaginationLink>
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>

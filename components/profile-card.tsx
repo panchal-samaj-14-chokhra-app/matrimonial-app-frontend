@@ -1,18 +1,6 @@
 import Image from "next/image"
 
 // Helper to convert Google Drive open links to direct image links
-function getDirectImageUrl(url: string) {
-  if (!url) return url;
-  // Google Drive open?id= or file/d/ links
-  const openIdMatch = url.match(/drive\.google\.com\/(?:open\?id=|file\/d\/)([\w-]+)/);
-  const idParamMatch = url.match(/[?&]id=([\w-]+)/);
-  const fileId = openIdMatch?.[1] || idParamMatch?.[1];
-  if (fileId) {
-    return `https://drive.google.com/uc?export=view&id=${fileId}`;
-  }
-  console.log(url)
-  return url;
-}
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -39,6 +27,38 @@ interface ProfileCardProps {
   variant?: "default" | "compact" | "detailed"
   showActions?: boolean
 }
+
+const getDirectImageUrl = (url) => {
+  let fileId = null;
+
+  const regexFileId = /\/file\/d\/([a-zA-Z0-9_-]+)/;
+  const matchFileId = url.match(regexFileId);
+  if (matchFileId && matchFileId[1]) {
+    fileId = matchFileId[1];
+  }
+
+  const regexOpenId = /open\?id=([a-zA-Z0-9_-]+)/;
+  if (!fileId) {
+    const matchOpenId = url.match(regexOpenId);
+    if (matchOpenId && matchOpenId[1]) {
+      fileId = matchOpenId[1];
+    }
+  }
+
+  const regexUcId = /uc\?id=([a-zA-Z0-9_-]+)/;
+  if (!fileId) {
+    const matchUcId = url.match(regexUcId);
+    if (matchUcId && matchUcId[1]) {
+      fileId = matchUcId[1];
+    }
+  }
+
+  if (fileId) {
+    return `https://drive.google.com/thumbnail?id=${fileId}`;
+  }
+
+  return url;
+};
 
 export function ProfileCard({ profile, variant = "default", showActions = true }: ProfileCardProps) {
   if (variant === "compact") {
