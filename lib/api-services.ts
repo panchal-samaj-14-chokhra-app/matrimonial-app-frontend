@@ -222,14 +222,34 @@ export const profileService = {
     return response.data
   },
 
-  getAllProfiles: async ({ page = 1, limit = 15 } = {}): Promise<{ data: Profile[]; totalCount: number }> => {
+  getAllProfiles: async ({
+    page = 1,
+    limit = 15,
+    name,
+    startAge,
+    endAge,
+    place,
+    maritalStatus,
+    gender
+  } = {
+
+    }) => {
     const response = await api.get("/metrimonial/profile-list", {
-      params: { page, limit },
+      params: {
+        page,
+        limit,
+        name,
+        startAge,
+        endAge,
+        place,
+        maritalStatus,
+        gender
+      }
     });
-    return response.data; 
-  },
 
-
+    return response.data;
+  }
+  ,
   createMatrimonialProfile: async (data: MatrimonialProfileData, images?: File[]): Promise<any> => {
     const formData = new FormData()
 

@@ -125,7 +125,7 @@ export default function ProfilesPageClient() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-orange-600">प्रोफाइल्स</h1>
-              <p className="text-gray-600 mt-1">सभी सक्रिय मैट्रिमोनियल प्रोफाइल्स</p>
+              {/* <p className="text-gray-600 mt-1">सभी सक्रिय मैट्रिमोनियल प्रोफाइल्स</p> */}
             </div>
           
           </div>

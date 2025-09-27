@@ -268,14 +268,55 @@ export const useEditProfileImage = () => {
 
 
 
-export const useAllMatrimonialProfiles = ({ page = 1, limit = 15 }) => {
+type MatrimonialProfilesQueryParams = {
+  page?: number;
+  limit?: number;
+  name?: string;
+  startAge?: number;
+  endAge?: number;
+  place?: string;
+  maritalStatus?: string;
+  gender?: string;
+};
+
+export const useAllMatrimonialProfiles = ({
+  page = 1,
+  limit = 15,
+  name,
+  startAge,
+  endAge,
+  place,
+  maritalStatus,
+  gender
+}: MatrimonialProfilesQueryParams = {}) => {
   return useQuery({
-    queryKey: ['all-matrimonial-profiles', page, limit],
-    queryFn: () => profileService.getAllProfiles({ page, limit }),
-    staleTime: 1000 * 60 * 5,
+    queryKey: [
+      'all-matrimonial-profiles',
+      page,
+      limit,
+      name,
+      startAge,
+      endAge,
+      place,
+      maritalStatus,
+      gender
+    ],
+    queryFn: () =>
+      profileService.getAllProfiles({
+        page,
+        limit,
+        name,
+        startAge,
+        endAge,
+        place,
+        maritalStatus,
+        gender
+      }),
+    staleTime: 1000 * 60 * 5, // 5 minutes
     enabled: true,
   });
 };
+
 
 export const useChokhlas = () => {
   return useQuery({

@@ -15,7 +15,8 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ProfileListing } from "@/components/profile-listing"
-import { Loader2, User, Mail, Edit, LogOut, X, ChevronsLeft, ChevronsRight } from "lucide-react"
+import { ProfileFilters } from "@/components/profile-filters"
+import { Loader2, User, Mail, Edit, LogOut, X, ChevronsLeft, ChevronsRight, Menu } from "lucide-react"
 import { useAllMatrimonialProfiles, useCheckUserExists } from "@/hooks/use-query-mutations"
 import { Card, CardContent } from "@/components/ui/card"
 
@@ -44,13 +45,28 @@ export default function ProfilesClient() {
     }
   }
 
+  const [filters, setFilters] = useState({
+    name: '',
+    startAge: '',
+    endAge: '',
+    place: '',
+    maritalStatus: '',
+    gender: ''
+  });
+
   const {
     data: apiProfiles,
     isLoading,
     isError,
     error,
     refetch,
-  } = useAllMatrimonialProfiles({ page: currentPage, limit: profilesPerPage })
+  } = useAllMatrimonialProfiles({
+    page: currentPage,
+    limit: profilesPerPage,
+    ...filters,
+    startAge: filters.startAge ? Number(filters.startAge) : undefined,
+    endAge: filters.endAge ? Number(filters.endAge) : undefined,
+  });
 
   const profiles = useMemo(() => {
     // Use new API shape: { data: [...], meta: { ... } }
@@ -108,79 +124,91 @@ export default function ProfilesClient() {
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-white">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <Image src="/logo.png" alt="Panchal Samaj Logo" width={60} height={60} className="rounded-full" />
-              <div>
-                <h1 className="text-3xl font-bold text-orange-600">प्रोफाइल्स / Profiles</h1>
-                <p className="text-gray-600 mt-1">सभी सक्रिय मैट्रिमोनियल प्रोफाइल्स / All Active Matrimonial Profiles</p>
+        <div className="max-w-7xl mx-auto px-2 py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+            <div className="flex flex-row items-center justify-between gap-2 sm:gap-4 w-full">
+              <div className="flex flex-row items-center gap-2 sm:gap-4">
+                <Image src="/logo.png" alt="Panchal Samaj Logo" width={40} height={40} className="rounded-full" />
+                <div>
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-orange-600">प्रोफाइल्स / Profiles</h1>
+                  {/* <p className="text-gray-600 mt-1 text-xs sm:text-sm md:text-base">सभी सक्रिय मैट्रिमोनियल प्रोफाइल्स / All Active Matrimonial Profiles</p> */}
+                </div>
               </div>
+              <button
+                className="w-8 h-8 sm:w-10 sm:h-10 bg-orange-600 rounded-full flex items-center justify-center cursor-pointer"
+                onClick={() => setClickOnCard(true)}
+                aria-label="Open profile sidebar"
+              >
+                {/* Show menu icon on mobile, user icon on desktop */}
+                <span className="sm:hidden"><Menu className="h-5 w-5 text-white" /></span>
+                <span className="hidden sm:block"><User className="h-5 w-5 text-white" /></span>
+              </button>
             </div>
 
             {/* User Profile Dropdown */}
-            <div className="relative inline-block text-left">
+            {/* Sidebar Drawer for User Profile */}
+            <div className="flex items-center justify-end">
+
+              {/* Sidebar Drawer */}
               <div
-                className="w-10 h-10 bg-orange-600 rounded-full flex items-center justify-center cursor-pointer"
-                onClick={() => setClickOnCard((prev) => !prev)}
+                className={`fixed top-0 right-0 h-full w-72 sm:w-96 bg-white shadow-lg z-50 transition-transform duration-300 ${clickOnCard ? 'translate-x-0' : 'translate-x-full'}`}
+                style={{ maxWidth: '100vw' }}
               >
-                <User className="h-5 w-5 text-white" />
-              </div>
-
-              {clickOnCard && (
-                <div className="absolute right-0 mt-2 w-72 sm:w-80 z-50 max-w-[110vw]">
-                  <Card className="border border-orange-200 shadow-sm rounded-md">
-                    <CardContent className="p-4 relative">
-                      <button
-                        onClick={() => setClickOnCard(false)}
-                        className="absolute top-2 right-2 text-orange-500 hover:text-orange-700"
-                        aria-label="Close"
+                <Card className="border-none shadow-none h-full flex flex-col">
+                  <CardContent className="p-4 relative flex-1 flex flex-col">
+                    <button
+                      onClick={() => setClickOnCard(false)}
+                      className="absolute top-2 right-2 text-orange-500 hover:text-orange-700"
+                      aria-label="Close"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                    <div className="flex items-center gap-3 mb-4 mt-8">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-orange-800 text-sm">प्रोफाइल / Profile</p>
+                        <p className="text-xs text-orange-600 truncate">{session?.user?.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 p-2 rounded bg-white/70 mb-4">
+                      <Mail className="h-4 w-4 text-orange-600" />
+                      <div className="flex-1">
+                        <p className="text-xs font-medium text-orange-800">ईमेल / Email</p>
+                        <p className="text-xs text-orange-600 truncate">{session?.user?.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-2 mt-auto">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1 text-xs border-orange-300 text-orange-700 hover:bg-orange-100"
+                        onClick={() => {
+                          router.push("/profile/edit")
+                          setClickOnCard(false)
+                        }}
                       >
-                        <X className="w-4 h-4" />
-                      </button>
-
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-orange-800 text-sm">प्रोफाइल / Profile</p>
-                          <p className="text-xs text-orange-600 truncate">{session?.user?.email}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 p-2 rounded bg-white/70 mb-4">
-                        <Mail className="h-4 w-4 text-orange-600" />
-                        <div className="flex-1">
-                          <p className="text-xs font-medium text-orange-800">ईमेल / Email</p>
-                          <p className="text-xs text-orange-600 truncate">{session?.user?.email}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="flex-1 text-xs border-orange-300 text-orange-700 hover:bg-orange-100"
-                          onClick={() => {
-                            router.push("/profile/edit")
-                            setClickOnCard(false)
-                          }}
-                        >
-                          <Edit className="h-3 w-3 mr-1" />
-                          संपादित करें / Edit
-                        </Button>
-
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="flex-1 text-xs border-red-300 text-red-700 hover:bg-red-50"
-                          onClick={() => signOut({ callbackUrl: "/login" })}
-                        >
-                          <LogOut className="h-3 w-3 mr-1" />
-                          साइन आउट / Log Out
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
+                        <Edit className="h-3 w-3 mr-1" />
+                        संपादित करें / Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1 text-xs border-red-300 text-red-700 hover:bg-red-50"
+                        onClick={() => signOut({ callbackUrl: "/login" })}
+                      >
+                        <LogOut className="h-3 w-3 mr-1" />
+                        साइन आउट / Log Out
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              {/* Overlay for closing sidebar on mobile */}
+              {clickOnCard && (
+                <div
+                  className="fixed inset-0 bg-black/30 z-40"
+                  onClick={() => setClickOnCard(false)}
+                  aria-label="Close sidebar overlay"
+                />
               )}
             </div>
           </div>
@@ -189,9 +217,10 @@ export default function ProfilesClient() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
+        <ProfileFilters filters={filters} setFilters={setFilters} />
         {profiles?.length > 0 ? (
           <>
-            <ProfileListing profiles={profiles} />
+            <ProfileListing profiles={profiles} setFilters={setFilters} filters={filters} />
 
             {/* Pagination */}
             <div className="flex justify-center items-center mt-8">
@@ -210,7 +239,7 @@ export default function ProfilesClient() {
                     >
                       <span className="flex items-center">
                         <ChevronsLeft className="w-5 h-5" />
-                       
+
                       </span>
                     </PaginationLink>
                   </PaginationItem>
@@ -314,7 +343,7 @@ export default function ProfilesClient() {
                     >
                       <span className="flex items-center">
                         <ChevronsRight className="w-5 h-5" />
-                       
+
                       </span>
                     </PaginationLink>
                   </PaginationItem>

@@ -9,23 +9,24 @@ import { Search, Filter, X, SlidersHorizontal } from "lucide-react"
 import { useState } from "react"
 
 interface ProfileFiltersProps {
-  onFilterChange?: (filters: any) => void
-  totalProfiles?: number
-  activeFilters?: string[]
+  filters: any;
+  setFilters: (filters: any) => void;
+  totalProfiles?: number;
+  activeFilters?: string[];
 }
 
-export function ProfileFilters({ onFilterChange, totalProfiles = 0, activeFilters = [] }: ProfileFiltersProps) {
+export function ProfileFilters({ filters = { name: "" }, setFilters, totalProfiles = 0, activeFilters = [] }: ProfileFiltersProps) {
   const [showAdvanced, setShowAdvanced] = useState(false)
 
   return (
-    <Card className="mb-6">
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
+    <Card className="mb-4 shadow-sm border border-orange-100">
+      <CardHeader className="pb-2 px-2">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <CardTitle className="text-lg text-orange-600 flex items-center gap-2">
             <Filter className="h-5 w-5" />
             खोजें और फिल्टर करें
           </CardTitle>
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <span className="text-sm text-gray-600">{totalProfiles} प्रोफाइल्स मिलीं</span>
             <Button
               variant="outline"
@@ -36,12 +37,12 @@ export function ProfileFilters({ onFilterChange, totalProfiles = 0, activeFilter
               <SlidersHorizontal className="h-4 w-4 mr-2" />
               {showAdvanced ? "कम फिल्टर" : "अधिक फिल्टर"}
             </Button>
-          </div>
+          </div> */}
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 px-2">
         {/* Active Filters */}
-        {activeFilters.length > 0 && (
+        {/* {activeFilters.length > 0 && (
           <div className="flex flex-wrap gap-2">
             <span className="text-sm text-gray-600">सक्रिय फिल्टर:</span>
             {activeFilters.map((filter, index) => (
@@ -54,15 +55,26 @@ export function ProfileFilters({ onFilterChange, totalProfiles = 0, activeFilter
               सभी साफ़ करें
             </Button>
           </div>
-        )}
+        )} */}
 
         {/* Basic Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
           <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-            <Input placeholder="नाम से खोजें..." className="pl-10" />
+            <Search className="absolute left-2 top-2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="नाम से खोजें..."
+              className="pl-8 py-2 text-sm rounded-md"
+              value={filters.name}
+              onChange={e => setFilters({ ...filters, name: e.target.value })}
+            />
           </div>
-          <Select>
+          <Select
+            value={filters.startAge && filters.endAge ? `${filters.startAge}-${filters.endAge}` : ''}
+            onValueChange={val => {
+              const [start, end] = val.split('-');
+              setFilters({ ...filters, startAge: start, endAge: end });
+            }}
+          >
             <SelectTrigger>
               <SelectValue placeholder="आयु सीमा" />
             </SelectTrigger>
@@ -71,10 +83,57 @@ export function ProfileFilters({ onFilterChange, totalProfiles = 0, activeFilter
               <SelectItem value="26-30">26-30 वर्ष</SelectItem>
               <SelectItem value="31-35">31-35 वर्ष</SelectItem>
               <SelectItem value="36-40">36-40 वर्ष</SelectItem>
-              <SelectItem value="40+">40+ वर्ष</SelectItem>
+              <SelectItem value="40-100">40+ वर्ष</SelectItem>
+            </SelectContent>
+
+            <SelectContent>
+              <SelectItem value="18-25">18-25 वर्ष</SelectItem>
+              <SelectItem value="26-30">26-30 वर्ष</SelectItem>
+              <SelectItem value="31-35">31-35 वर्ष</SelectItem>
+              <SelectItem value="36-40">36-40 वर्ष</SelectItem>
+              <SelectItem value="40-100">40+ वर्ष</SelectItem>
             </SelectContent>
           </Select>
-          <Select>
+
+          <Select
+            value={filters.gender}
+            onValueChange={val => setFilters({ ...filters, gender: val })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="लिंग" />
+            </SelectTrigger>
+            <SelectContent>
+
+
+              <SelectItem value="MALE">पुरुष</SelectItem>
+              <SelectItem value="FEMALE">महिला</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select
+            value={filters.maritalStatus}
+            onValueChange={val => setFilters({ ...filters, maritalStatus: val })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="वैवाहिक स्थिति" />
+            </SelectTrigger>
+            <SelectContent>
+
+              <SelectItem value="single">अविवाहित</SelectItem>
+              <SelectItem value="divorced">तलाकशुदा</SelectItem>
+              <SelectItem value="widowed">विधवा/विधुर</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button
+            variant="outline"
+            className="bg-transparent"
+            onClick={() => setFilters({ name: '', startAge: '', endAge: '', place: '', maritalStatus: '', gender: '' })}
+          >
+            फिल्टर साफ़ करें
+          </Button>
+          {/* <Select
+            value={filters.place}
+            onValueChange={val => setFilters({ ...filters, place: val })}
+          >
             <SelectTrigger>
               <SelectValue placeholder="स्थान" />
             </SelectTrigger>
@@ -85,8 +144,8 @@ export function ProfileFilters({ onFilterChange, totalProfiles = 0, activeFilter
               <SelectItem value="vadodara">वडोदरा</SelectItem>
               <SelectItem value="gandhinagar">गांधीनगर</SelectItem>
             </SelectContent>
-          </Select>
-          <Select>
+          </Select> */}
+          {/* <Select>
             <SelectTrigger>
               <SelectValue placeholder="शिक्षा" />
             </SelectTrigger>
@@ -96,7 +155,7 @@ export function ProfileFilters({ onFilterChange, totalProfiles = 0, activeFilter
               <SelectItem value="professional">व्यावसायिक</SelectItem>
               <SelectItem value="doctorate">डॉक्टरेट</SelectItem>
             </SelectContent>
-          </Select>
+          </Select> */}
         </div>
 
         {/* Advanced Filters */}
@@ -114,6 +173,8 @@ export function ProfileFilters({ onFilterChange, totalProfiles = 0, activeFilter
                 <SelectItem value="government">सरकारी नौकरी</SelectItem>
               </SelectContent>
             </Select>
+
+
             <Select>
               <SelectTrigger>
                 <SelectValue placeholder="वेतन सीमा" />
@@ -161,6 +222,7 @@ export function ProfileFilters({ onFilterChange, totalProfiles = 0, activeFilter
                 <SelectValue placeholder="अंतिम सक्रिय" />
               </SelectTrigger>
               <SelectContent>
+
                 <SelectItem value="today">आज</SelectItem>
                 <SelectItem value="week">इस सप्ताह</SelectItem>
                 <SelectItem value="month">इस महीने</SelectItem>
@@ -171,14 +233,15 @@ export function ProfileFilters({ onFilterChange, totalProfiles = 0, activeFilter
         )}
 
         {/* Action Buttons */}
-        <div className="flex gap-2 pt-2">
-          <Button className="bg-orange-600 hover:bg-orange-700">
+        <div className="flex flex-col sm:flex-row gap-2 pt-2 justify-end items-center">
+          {/* <Button
+            className="bg-orange-600 hover:bg-orange-700"
+            onClick={() => setFilters({ ...filters })}
+          >
             <Search className="h-4 w-4 mr-2" />
             खोजें
-          </Button>
-          <Button variant="outline" className="bg-transparent">
-            फिल्टर साफ़ करें
-          </Button>
+          </Button> */}
+
         </div>
       </CardContent>
     </Card>

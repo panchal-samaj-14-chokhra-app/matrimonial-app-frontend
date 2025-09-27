@@ -27,22 +27,21 @@ interface ProfileListingProps {
   profiles: Profile[]
   title?: string
   showFilters?: boolean
+  setFilters?: (filters: any) => void
+  filters?: any
 }
 
-export function ProfileListing({ profiles, title = "प्रोफाइल्स", showFilters = true }: ProfileListingProps) {
+export function ProfileListing({ profiles, title = "प्रोफाइल्स", showFilters = true, setFilters, filters }: ProfileListingProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list" | "compact">("grid")
   const [sortBy, setSortBy] = useState("recent")
   return (
     <div className="space-y-6">
       {/* Filters */}
-      {/* {showFilters && <ProfileFilters totalProfiles={profiles?.length} activeFilters={["25-30 वर्ष", "अहमदाबाद"]} />} */}
+    
 
       {/* View Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-
-
-        {/* <div className="flex items-center gap-4">
-        
+      {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-4">
           <Select value={sortBy} onValueChange={setSortBy}>
             <SelectTrigger className="w-48">
               <SelectValue placeholder="क्रमबद्ध करें" />
@@ -83,8 +82,8 @@ export function ProfileListing({ profiles, title = "प्रोफाइल्�
               <Grid className="h-4 w-4" />
             </Button>
           </div>
-        </div> */}
-      </div>
+        </div>
+      </div> */}
 
       {/* Profiles Grid/List */}
       <div
