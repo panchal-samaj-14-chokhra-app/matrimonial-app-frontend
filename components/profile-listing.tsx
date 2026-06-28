@@ -89,7 +89,7 @@ export function ProfileListing({ profiles, title = "प्रोफाइल्�
       <div
         className={
           viewMode === "grid"
-            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4"
             : viewMode === "list"
               ? "grid grid-cols-1 lg:grid-cols-2 gap-4"
               : "grid grid-cols-1 gap-3"
