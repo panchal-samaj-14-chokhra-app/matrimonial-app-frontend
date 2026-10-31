@@ -20,9 +20,11 @@ export interface LoginResponse {
 
 export async function loginUser(email: string, password: string): Promise<{ user: User } | { error: string }> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://31.97.237.171:10000"
-
-    console.log("[v0] Attempting login with API:", `${apiUrl}/api/auth/login`)
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (!apiUrl) {
+      console.error("[auth] NEXT_PUBLIC_API_URL is not set");
+      return { error: "सर्वर कॉन्फ़िगरेशन त्रुटि" };
+    }
 
     const response = await fetch(`${apiUrl}/api/auth/login`, {
       method: "POST",
@@ -32,24 +34,16 @@ export async function loginUser(email: string, password: string): Promise<{ user
       body: JSON.stringify({ email, password }),
     })
 
-    console.log("[v0] Login response status:", response.status)
-    console.log("[v0] Login response headers:", Object.fromEntries(response.headers.entries()))
-
     if (!response.ok) {
-      const errorText = await response.text()
-      console.log("[v0] Login error response:", errorText)
       return { error: `लॉगिन में त्रुटि: ${response.status}` }
     }
 
     const contentType = response.headers.get("content-type")
     if (!contentType || !contentType.includes("application/json")) {
-      const responseText = await response.text()
-      console.log("[v0] Non-JSON response:", responseText)
       return { error: "सर्वर से गलत प्रतिक्रिया मिली" }
     }
 
     const data: LoginResponse = await response.json()
-    console.log("[v0] Login successful:", { userId: data.userId, email: data.email, role: data.role })
 
     const user: User = {
       userId: data.userId,
@@ -85,7 +79,7 @@ export async function setAuthCookie(user: User) {
       villageId: user.villageId,
     }),
     {
-      httpOnly: false,
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7, // 7 days
