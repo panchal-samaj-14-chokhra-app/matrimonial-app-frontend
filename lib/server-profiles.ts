@@ -2,7 +2,8 @@
 // backend is never called from the browser — nothing shows in the Network tab.
 import "server-only"
 
-const API = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || "http://31.97.237.171:10000"
+const API = process.env.API_URL
+if (!API) console.error("[server-profiles] API_URL is not set")
 
 export interface ProfileFilters {
   name?: string

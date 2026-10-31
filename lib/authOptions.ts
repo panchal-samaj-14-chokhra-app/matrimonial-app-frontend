@@ -14,9 +14,9 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         try {
           if (!credentials?.email || !credentials?.password) return null
-          const baseUrl = process.env.NEXT_PUBLIC_API_URL
+          const baseUrl = process.env.API_URL
           if (!baseUrl) {
-            console.error("[auth] NEXT_PUBLIC_API_URL not set")
+            console.error("[auth] API_URL not set")
             return null
           }
           const controller = new AbortController()

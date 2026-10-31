@@ -1,5 +1,3 @@
-// Helper to convert Google Drive links to direct image links (thumbnail)
-
 "use client"
 
 import type React from "react"
@@ -19,37 +17,7 @@ import { useSession, signOut } from "next-auth/react"
 import { useToast } from "@/hooks/use-toast"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@radix-ui/react-separator"
-const getDirectImageUrl = (url: string) => {
-    let fileId = null;
-
-    const regexFileId = /\/file\/d\/([a-zA-Z0-9_-]+)/;
-    const matchFileId = url.match(regexFileId);
-    if (matchFileId && matchFileId[1]) {
-        fileId = matchFileId[1];
-    }
-
-    const regexOpenId = /open\?id=([a-zA-Z0-9_-]+)/;
-    if (!fileId) {
-        const matchOpenId = url.match(regexOpenId);
-        if (matchOpenId && matchOpenId[1]) {
-            fileId = matchOpenId[1];
-        }
-    }
-
-    const regexUcId = /uc\?id=([a-zA-Z0-9_-]+)/;
-    if (!fileId) {
-        const matchUcId = url.match(regexUcId);
-        if (matchUcId && matchUcId[1]) {
-            fileId = matchUcId[1];
-        }
-    }
-
-    if (fileId) {
-        return `https://drive.google.com/thumbnail?id=${fileId}`;
-    }
-
-    return url;
-};
+import { toProxyUrl } from "@/lib/image-url"
 
 export default function CreateEditProfilePage({ isEdit }: { isEdit: boolean }) {
     const router = useRouter()
@@ -323,7 +291,7 @@ export default function CreateEditProfilePage({ isEdit }: { isEdit: boolean }) {
                                                 className="relative aspect-square border-2 border-orange-300 rounded-lg overflow-hidden"
                                             >
                                                 <img
-                                                    src={img instanceof File ? URL.createObjectURL(img) : getDirectImageUrl(img.url)}
+                                                    src={img instanceof File ? URL.createObjectURL(img) : toProxyUrl(img.url)}
                                                     alt={`Upload ${index + 1}`}
                                                     className="w-full h-full object-cover"
                                                 />

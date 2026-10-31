@@ -1,9 +1,10 @@
 import axios, { type AxiosError, type AxiosResponse } from "axios"
 import { toast } from "sonner"
 
-// Create axios instance with base configuration
+// All requests go through the Next.js proxy at /api/proxy/*, which rewrites
+// to the real backend server-side. The backend URL never appears in the browser.
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "/api",
+  baseURL: "/api/proxy",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

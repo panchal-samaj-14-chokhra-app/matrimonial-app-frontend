@@ -20,9 +20,9 @@ export interface LoginResponse {
 
 export async function loginUser(email: string, password: string): Promise<{ user: User } | { error: string }> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const apiUrl = process.env.API_URL;
     if (!apiUrl) {
-      console.error("[auth] NEXT_PUBLIC_API_URL is not set");
+      console.error("[auth] API_URL is not set");
       return { error: "सर्वर कॉन्फ़िगरेशन त्रुटि" };
     }
 
