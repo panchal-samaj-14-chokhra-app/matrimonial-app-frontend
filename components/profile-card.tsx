@@ -1,12 +1,11 @@
 import Image from "next/image"
-
-// Helper to convert Google Drive open links to direct image links
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Heart, MessageCircle, MapPin, Calendar, GraduationCap, Briefcase, Eye } from "lucide-react"
 import { ProfileIdBadge } from "./profile-id-badge"
+import { toProxyUrl } from "@/lib/image-url"
 
 interface ProfileCardProps {
   profile: {
@@ -28,38 +27,6 @@ interface ProfileCardProps {
   showActions?: boolean
 }
 
-const getDirectImageUrl = (url) => {
-  let fileId = null;
-
-  const regexFileId = /\/file\/d\/([a-zA-Z0-9_-]+)/;
-  const matchFileId = url.match(regexFileId);
-  if (matchFileId && matchFileId[1]) {
-    fileId = matchFileId[1];
-  }
-
-  const regexOpenId = /open\?id=([a-zA-Z0-9_-]+)/;
-  if (!fileId) {
-    const matchOpenId = url.match(regexOpenId);
-    if (matchOpenId && matchOpenId[1]) {
-      fileId = matchOpenId[1];
-    }
-  }
-
-  const regexUcId = /uc\?id=([a-zA-Z0-9_-]+)/;
-  if (!fileId) {
-    const matchUcId = url.match(regexUcId);
-    if (matchUcId && matchUcId[1]) {
-      fileId = matchUcId[1];
-    }
-  }
-
-  if (fileId) {
-    return `https://drive.google.com/thumbnail?id=${fileId}`;
-  }
-
-  return url;
-};
-
 export function ProfileCard({ profile, variant = "default", showActions = true }: ProfileCardProps) {
   if (variant === "compact") {
     return (
@@ -68,7 +35,7 @@ export function ProfileCard({ profile, variant = "default", showActions = true }
           <div className="flex gap-4">
             <div className="relative flex-shrink-0">
               <Image
-                src={getDirectImageUrl(profile.image || "/placeholder.svg")}
+                src={toProxyUrl(profile.image || "/placeholder.svg")}
                 alt={profile.name}
                 width={80}
                 height={80}
@@ -117,7 +84,7 @@ export function ProfileCard({ profile, variant = "default", showActions = true }
       <Card className="overflow-hidden hover:shadow-lg transition-shadow">
         <div className="relative">
           <Image
-            src={getDirectImageUrl((profile.showImages ? profile.image : "/placeholder.svg") || "/placeholder.svg")}
+            src={toProxyUrl((profile.showImages ? profile.image : "/placeholder.svg") || "/placeholder.svg")}
             alt={profile.name}
             width={400}
             height={300}
@@ -211,7 +178,7 @@ export function ProfileCard({ profile, variant = "default", showActions = true }
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={getDirectImageUrl((profile.showImages ? profile.image : "/placeholder.svg") || "/placeholder.svg")}
+              src={toProxyUrl((profile.showImages ? profile.image : "/placeholder.svg") || "/placeholder.svg")}
               alt={profile.name}
               draggable={false}
               onDragStart={(e) => e.preventDefault()}

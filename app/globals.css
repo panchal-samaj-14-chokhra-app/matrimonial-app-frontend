@@ -121,3 +121,32 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Profile image protection — prevent right-click save and drag-to-desktop */
+.protected-image {
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* Wrapper must re-enable pointer-events so buttons inside still work */
+.protected-image-wrap {
+  position: relative;
+  user-select: none;
+}
+
+.protected-image-wrap img,
+.protected-image-wrap canvas {
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* Transparent overlay blocks right-click on the image itself */
+.protected-image-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: transparent;
+}

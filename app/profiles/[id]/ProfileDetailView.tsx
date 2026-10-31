@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Heart, Phone, Mail } from "lucide-react"
 import { PageHeader } from "@/components/page-header"
 import React, { useState, useEffect } from "react"
+import { toProxyUrl } from "@/lib/image-url"
 
 type ImageCarouselProps = {
   images?: { url: string }[]
@@ -190,7 +191,8 @@ export default function ProfileDetailView({ profile }: { profile: any }) {
 }
 
 const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, name, isVerified, showImages }) => {
-  const imgs = images && images.length > 0 ? images : [{ url: "/placeholder.svg" }]
+  const imgs = (images && images.length > 0 ? images : [{ url: "/placeholder.svg" }])
+    .map(img => ({ ...img, url: toProxyUrl(img.url) }))
   const [current, setCurrent] = useState(0)
   const [showModal, setShowModal] = useState(false)
 
@@ -201,12 +203,12 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, name, isVerified,
 
   return (
     <>
-      <div className="relative flex items-center justify-center h-80 bg-gray-50">
+      <div className="protected-image-wrap relative flex items-center justify-center h-80 bg-gray-50">
         <Image
           src={(showImages ? imgs[current].url : "/placeholder.svg") || "/placeholder.svg"}
           alt={name || `Profile Image ${current + 1}`}
           width={400} height={500}
-          className="w-full h-80 object-cover rounded-t-lg transition-all duration-700 cursor-pointer select-none"
+          className="w-full h-80 object-cover rounded-t-lg transition-all duration-700 cursor-pointer select-none protected-image"
           onClick={() => setShowModal(true)} onContextMenu={e => e.preventDefault()} draggable={false}
         />
         {isVerified && <div className="absolute top-4 right-4"><Badge className="bg-green-500 hover:bg-green-600">सत्यापित</Badge></div>}
